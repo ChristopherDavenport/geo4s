@@ -37,7 +37,16 @@ val BaseVersion = "0.1"
 
 
 libraryDependencies ++= Seq(
-
+  "co.fs2"          %% "fs2-io"               % "0.9.2"   ,
+  "co.fs2"          %% "fs2-core"             % "0.9.2"   ,
+  "co.fs2"          %% "fs2-cats"             % "0.3.0"   ,
+  "org.typelevel"   %% "cats"                 % "0.9.0"   ,
+  "org.spire-math"  %% "spire"                % "0.13.0"  ,
+  "com.chuusai"     %% "shapeless"            % "2.3.2"   ,
+  "org.tpolecat"    %% "doobie-core-cats"     % "0.4.1"   ,
+  "org.tpolecat"    %% "doobie-postgres-cats" % "0.4.1"   ,
+  "org.tpolecat"    %% "doobie-hikari-cats"   % "0.4.1"   ,
+  "org.postgresql"  %  "postgresql"           % "9.4.1212"
 )
 
 licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
@@ -76,7 +85,7 @@ scalacOptions ++= Seq(
 scalacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, major)) if major >= 11 => Seq(
-      "-Ywarn-unused-import", // Not available in 2.10
+      //"-Ywarn-unused-import", // Not available in 2.10
       "-Ywarn-numeric-widen" // In 2.10 this produces a some strange spurious error
     )
     case _ => Seq.empty
