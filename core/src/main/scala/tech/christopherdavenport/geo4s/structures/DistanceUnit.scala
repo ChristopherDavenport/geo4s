@@ -1,8 +1,5 @@
-package io.chrisdavenport.gps4s.structures
+package tech.christopherdavenport.geo4s.structures
 
-/**
-  * Created by davenpcm on 2/11/17.
-  */
 sealed trait DistanceUnit
 
 object DistanceUnit {

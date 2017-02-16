@@ -1,6 +1,6 @@
-package io.chrisdavenport.gps4s.structures
+package tech.christopherdavenport.geo4s.structures
 
-import io.chrisdavenport.gps4s.coordinate.Coordinate
+import tech.christopherdavenport.geo4s.coordinate.Coordinate
 
 /**
   * Created by davenpcm on 2/11/17.

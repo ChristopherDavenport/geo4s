@@ -1,9 +1,7 @@
-package io.chrisdavenport.gps4s.structures
+package tech.christopherdavenport.geo4s.structures
 
 import spire.math._
-/**
-  * Created by davenpcm on 2/11/17.
-  */
+
 case class Ellipsoid[A](semiMajor: A, flattening: A)(implicit fractional : Fractional[A]){
   val flatteningInverse : A = fractional.div(fractional.fromDouble(1.0), flattening)
   val semiMinor : A =  fractional.times( fractional.minus(fractional.fromDouble(1.0) , flattening) , semiMajor)

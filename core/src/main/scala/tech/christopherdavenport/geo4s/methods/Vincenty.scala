@@ -1,14 +1,12 @@
-package io.chrisdavenport.gps4s.methods
+package tech.christopherdavenport.geo4s.methods
 
-import io.chrisdavenport.gps4s.structures.Ellipsoid
+import tech.christopherdavenport.geo4s.structures.Ellipsoid
 import spire.algebra._
 import spire.math._
 import spire.implicits._
 
-import scala.annotation.tailrec // provides infix operators, instances and conversions
-/**
-  * Created by davenpcm on 2/11/17.
-  */
+import scala.annotation.tailrec
+
 object Vincenty {
 
   case class Convergence[A](acceptable: A)(implicit fractional: Fractional[A])

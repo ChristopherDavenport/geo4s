@@ -1,6 +1,10 @@
-organization := "chrisdavenport"
 
-name := "gps4s"
+
+addCommandAlias("ci", ";test ;mimaReportBinaryIssues")
+
+organization in ThisBuild := "tech.christopherdavenport"
+
+name := "geo4s"
 
 /*
  * Compatibility version.  Use this to declare what version with
@@ -36,36 +40,93 @@ name := "gps4s"
 val BaseVersion = "0.1"
 
 
-libraryDependencies ++= Seq(
-  "co.fs2"          %% "fs2-io"               % "0.9.2"   ,
-  "co.fs2"          %% "fs2-core"             % "0.9.2"   ,
-  "co.fs2"          %% "fs2-cats"             % "0.3.0"   ,
-  "org.typelevel"   %% "cats"                 % "0.9.0"   ,
-  "org.spire-math"  %% "spire"                % "0.13.0"  ,
-  "com.chuusai"     %% "shapeless"            % "2.3.2"   ,
-  "org.tpolecat"    %% "doobie-core-cats"     % "0.4.1"   ,
-  "org.tpolecat"    %% "doobie-postgres-cats" % "0.4.1"   ,
-  "org.tpolecat"    %% "doobie-hikari-cats"   % "0.4.1"   ,
-  "org.postgresql"  %  "postgresql"           % "9.4.1212"
-)
+//libraryDependencies ++= Seq(
+//  "co.fs2"          %% "fs2-io"               % "0.9.2"   ,
+//  "co.fs2"          %% "fs2-core"             % "0.9.2"   ,
+//  "co.fs2"          %% "fs2-cats"             % "0.3.0"   ,
+//  "org.typelevel"   %% "cats"                 % "0.9.0"   ,
+//  "org.spire-math"  %% "spire"                % "0.13.0"  ,
+//  "com.chuusai"     %% "shapeless"            % "2.3.2"   ,
+//  "org.tpolecat"    %% "doobie-core-cats"     % "0.4.1"   ,
+//  "org.tpolecat"    %% "doobie-postgres-cats" % "0.4.1"   ,
+//  "org.tpolecat"    %% "doobie-hikari-cats"   % "0.4.1"   ,
+//  "org.postgresql"  %  "postgresql"           % "9.4.1212"
+//)
 
 licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
 
 // bintrayVcsUrl := Some("...")
 
+val coursierSettings = Seq(
+  coursierUseSbtCredentials := true,
+  coursierChecksums := Nil // workaround for nexus sync bugs
+)
+
+val bintraySettings = Seq(
+  credentials in bintray := {
+    if (isTravisBuild.value)
+      Nil
+    else
+      (credentials in bintray).value
+  }
+)
+
+val mimaSettings = Seq(
+  mimaPreviousArtifacts := {
+    val TagBase = """^(\d+)\.(\d+).*"""r
+    val TagBase(major, minor) = BaseVersion
+
+    val tags = "git tag --list".!! split "\n" map { _.trim }
+
+    val versions =
+      tags filter { _ startsWith s"v$major.$minor" } map { _ substring 1 }
+
+    versions map { v => organization.value %% name.value % v } toSet
+  }
+)
+
+
+lazy val root = project
+  .in(file("."))
+  .aggregate(benchmarks, core, cats)
+  .settings(coursierSettings, bintraySettings)
+
+lazy val benchmarks = project
+  .in(file("benchmarks"))
+  .dependsOn(core, cats)
+  .settings(
+    name := "geo4s-benchmarks",
+    coursierSettings,
+    bintraySettings)
+
+
+lazy val core = project
+  .in(file("core"))
+  .settings(
+    name := "geo4s-core",
+    coursierSettings,
+    bintraySettings,
+    mimaSettings,
+    libraryDependencies ++= Seq(
+      "org.spire-math"  %% "spire" % "0.13.0"
+    ))
+
+lazy val cats = project
+  .in(file("cats"))
+  .dependsOn(core)
+  .settings(
+    name := "geo4s-cats",
+    coursierSettings,
+    bintraySettings,
+    mimaSettings)
+
 /***********************************************************************\
                       Boilerplate below these lines
 \***********************************************************************/
 
-coursierUseSbtCredentials := true
-coursierChecksums := Nil      // workaround for nexus sync bugs
 
-credentials in bintray := {
-  if (isTravisBuild.value)
-    Nil
-  else
-    (credentials in bintray).value
-}
+
+
 
 addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.3" cross CrossVersion.binary)
 

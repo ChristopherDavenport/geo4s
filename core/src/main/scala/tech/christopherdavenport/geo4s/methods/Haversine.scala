@@ -1,16 +1,13 @@
-package io.chrisdavenport.gps4s.methods
+package tech.christopherdavenport.geo4s.methods
 
 //import scala.math._
 import io.chrisdavenport.gps4s.constants._
-import io.chrisdavenport.gps4s.coordinate.Coordinate
+import tech.christopherdavenport.geo4s.coordinate.Coordinate
 
 //import spire.algebra._   // provides algebraic type classes
 import spire.math._      // provides functions, types, and type classes
 import spire.implicits._ // provides infix operators, instances and conversions
 
-/**
-  * Created by davenpcm on 2/9/17.
-  */
 object Haversine {
 
   def pure(lat1:Double, lon1:Double, lat2:Double, lon2:Double)(radiusOfSphere: Double) : Double ={
